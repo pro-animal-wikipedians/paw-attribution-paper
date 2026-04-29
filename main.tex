@@ -1,6 +1,8 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -8,6 +10,8 @@
 \usepackage{natbib}
 \usepackage[margin=1in]{geometry}
 \usepackage{xcolor}
+\usepackage{parskip}
+\linespread{1.08}
 
 \title{Small edits, large models: How Wikipedia advocacy shapes LLM values}
 \author{
@@ -34,7 +38,7 @@ We study this phenomenon in the domain of animal welfare. The Pro-Animal Wikiped
 
 We employ Bergson \citep{lucia2026bergson}, an open-source library implementing TrackStar \citep{chang2024scalable}, to trace how individual Wikipedia edits influence model predictions. TrackStar works at the scale of billion-parameter models and corpora over 160 billion tokens, letting us go beyond surface-level keyword overlap and measure whether specific edits actually shift what a model says about animal welfare. This matters because the training examples that most influence a model's outputs are often not the ones that most obviously contain the relevant information \citep{chang2024scalable}.
 
-\subsection{Why}
+\subsection{Why this matters for advocacy}
 
 Animal advocacy organizations have limited resources and must choose their interventions carefully. Lobbying, public campaigns, and corporate outreach are familiar tools, but the rise of language models has created a new channel of influence that most organizations have not yet explored. If AI systems shape public understanding of animal welfare, then the data those systems learn from becomes a lever for change, and Wikipedia, as the most trusted and heavily weighted text source in model training, is the most accessible lever available. PAW is a loose coalition of editors who add sourced information about animal exploitation to relevant Wikipedia articles. Their edits are factual and follow Wikipedia's editorial policies, but they deliberately foreground animal welfare in articles about fast-food chains, animal sentience, and related topics.
 
@@ -107,13 +111,13 @@ To ensure that the observed influence was specific to the domain of animal welfa
 
 MAGIC traces influence through the full training process, estimating how much each document causally contributes to the model's predictions. We fine-tuned Llama-3.2-1B on the 236-document dataset (118 PAW edits + 118 WikiText-103 controls) at five random seeds for each of the two query sets, then pooled the results.
 
-\textbf{Top-10 dominance is total and replicates across every seed.} For each seed we ranked all 236 training documents by MAGIC influence on the 80 animal welfare queries (most-negative score = most influential in the bergson convention). In \emph{every one of the five seeds}, all 10 of the top-10 most influential documents were PAW edits (Figure~\ref{fig:magic_multiseed}). On the 90 general queries about the same entities, that figure dropped to 4--6 of the top-10---right at the chance baseline of 5/10---in every seed. The 100\% versus chance split for AW vs.\ general queries replicates without exception across all five training-order shuffles.
+\textbf{Top-10 dominance is total and replicates across every seed.} For each seed we ranked all 236 training documents by MAGIC influence on the 80 animal welfare queries (most-negative score = most influential in the bergson convention). In \emph{every one of the five seeds}, all 10 of the top-10 most influential documents were PAW edits (Figure~\ref{fig:magic_multiseed}). On the 90 general queries about the same entities, that figure dropped to 4--6 of the top-10, right at the chance baseline of 5/10, in every seed. The 100\% versus chance split for AW vs.\ general queries replicates without exception across all five training-order shuffles.
 
 \textbf{Aggregate score difference is significant in every seed.} Mean MAGIC influence was significantly more negative (more influential) for PAW edits than for WikiText-103 controls on AW queries in all five seeds (Mann-Whitney $U$, $p < 0.0001$ each seed; mean difference $-0.0028$ to $-0.0039$). On general queries the same comparison gave mean differences of $-0.0001$ to $-0.0006$, an effect 6--30$\times$ smaller, and reached $p < 0.05$ in only 4 of 5 seeds. The asymmetry the TrackStar analysis showed at the retrieval level reappears at the counterfactual-training-influence level: PAW edits influence the model specifically on animal welfare topics, not on the entities in general.
 
 \textbf{Internal validation.} Leave-subset-out validation (5 subsets per run) returned Spearman $\rho = 1.00$ ($p < 10^{-23}$) for all 10 runs, with no numerical instability and consistent score-magnitude ranges across seeds.
 
-\textbf{Which PAW documents are most influential?} Specific document rankings within the top-10 vary modestly across seeds---this is the part of the MAGIC signal most sensitive to training-order shuffles---but several PAW edits appear consistently. Olive Garden's section describing Darden's battery-cage-egg phase-out commitment and the Open Wing Alliance's subsequent criticism for slow progress was in the top-10 on 4 of 5 seeds. Dianne Feinstein's record on Proposition 12 and the 2023 farm bill was in the top-10 on 3 of 5 seeds, as was the New Zealand Animal Welfare Advisory Committee's pig-farm review section, the African Development Bank's section on activist criticism for financing intensive animal agriculture, and New World supermarket's 2027 cage-free egg commitment. The common thread across these top-replicating PAW edits is concrete, dated detail: specific commitments, specific organizations doing the criticizing, specific policies, specific years. Edits without that texture---scorecard ratings, brief political position statements---did not consistently rank near the top.
+\textbf{Which PAW documents are most influential?} Specific document rankings within the top-10 vary modestly across seeds (this is the part of the MAGIC signal most sensitive to training-order shuffles), but several PAW edits appear consistently. Olive Garden's section describing Darden's battery-cage-egg phase-out commitment and the Open Wing Alliance's subsequent criticism for slow progress was in the top-10 on 4 of 5 seeds. Dianne Feinstein's record on Proposition 12 and the 2023 farm bill was in the top-10 on 3 of 5 seeds, as was the New Zealand Animal Welfare Advisory Committee's pig-farm review section, the African Development Bank's section on activist criticism for financing intensive animal agriculture, and New World supermarket's 2027 cage-free egg commitment. The common thread across these top-replicating PAW edits is concrete, dated detail: specific commitments, specific organizations doing the criticizing, specific policies, specific years. Edits without that texture, such as scorecard ratings or brief political position statements, did not consistently rank near the top.
 
 \begin{figure}[t]
     \centering
@@ -135,7 +139,13 @@ The ablation produced a clean separation. The model trained on PAW content had a
 
 \section{Limitations}
 
-Our attribution experiments used Llama 3.1 8B (TrackStar) and Llama 3.2 1B (MAGIC, ablation). These are smaller than models like GPT-4 or Claude, but the key point is that those frontier models were also trained on Wikipedia, meaning PAW's edits are already in their training data. We demonstrate the mechanism at scales where attribution is computationally feasible; the next section argues that the effect persists, and likely strengthens, at frontier scale. The MAGIC and ablation experiments used all 125 PAW edits (118 after cleaning); TrackStar used a 36-pair within-article subset. Future work with topic-matched controls (animal welfare text not written by PAW) could tease apart whether the signal comes from PAW's specific framing or from animal welfare content more broadly. We also measure influence on model prediction quality, not on what a chatbot actually says in conversation; bridging that gap is important future work. The MAGIC results in this paper are pooled across five random training-order seeds with internal validation $\rho = 1.00$ on every run, so the headline aggregate findings (AW vs.\ control top-10 share, mean influence difference, asymmetry between AW and general queries) are not seed-dependent. Specific rankings of individual PAW documents within the top-10 do vary modestly across seeds, and we report only the documents that replicate in at least 3 of 5 seeds.
+\textbf{Model scale.} Our attribution experiments used Llama 3.1 8B (TrackStar) and Llama 3.2 1B (MAGIC, ablation). These are smaller than models like GPT-4 or Claude, but the key point is that those frontier models were also trained on Wikipedia, meaning PAW's edits are already in their training data. We demonstrate the mechanism at scales where attribution is computationally feasible; the next section argues that the effect persists, and likely strengthens, at frontier scale.
+
+\textbf{Dataset coverage.} The MAGIC and ablation experiments used all 125 PAW edits (118 after cleaning); TrackStar used a 36-pair within-article subset. Future work with topic-matched controls, that is, animal welfare text not written by PAW, could tease apart whether the signal comes from PAW's specific framing or from animal welfare content more broadly.
+
+\textbf{What MAGIC measures.} We measure influence on model prediction quality, not on what a chatbot actually says in conversation. Bridging that gap is important future work.
+
+\textbf{Seed sensitivity of specific document rankings.} The MAGIC results in this paper are pooled across five random training-order seeds with internal validation $\rho = 1.00$ on every run, so the headline aggregate findings (AW vs.\ control top-10 share, mean influence difference, asymmetry between AW and general queries) are not seed-dependent. Specific rankings of individual PAW documents within the top-10 do vary modestly across seeds, and we report only the documents that replicate in at least 3 of 5 seeds.
 
 \section{Why This Already Applies to Frontier Models}
 
