@@ -1,25 +1,33 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass{article}
+
+\PassOptionsToPackage{numbers, compress}{natbib}
+
+% preprint option produces an arxiv-friendly version with title block and page numbers
+\usepackage[preprint]{neurips_2024}
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage{microtype}
-\usepackage{amsmath,amssymb}
-\usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{url}
 \usepackage{booktabs}
-\usepackage{natbib}
-\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{nicefrac}
+\usepackage{microtype}
 \usepackage{xcolor}
-\usepackage{parskip}
-\linespread{1.08}
+\usepackage{graphicx}
 
-\title{Small edits, large models: How Wikipedia advocacy shapes LLM values}
-\author{
-  Brazilek J$^{*,1}$ \and Navas M$^{*}$ \and Gnauck A$^{2}$ \\[0.4em]
-  \small{$^{1}$Compassion Aligned Machine Learning (CaML) \quad $^{2}$Pro-Animal Wikipedians (PAW)} \\[0.2em]
-  \small{$^{*}$Equal contribution \quad Navas M: Independent researcher}
+\title{Small edits, large models:\\How Wikipedia advocacy shapes LLM values}
+
+\author{%
+  Jasmine Brazilek\thanks{Equal contribution.}\\
+  Compassion Aligned Machine Learning (CaML)\\
+  \And
+  Maria Navas\footnotemark[1]\\
+  Independent researcher\\
+  \And
+  Adam Gnauck\\
+  Pro-Animal Wikipedians (PAW)\\
 }
-\date{}
 
 \begin{document}
 \maketitle
